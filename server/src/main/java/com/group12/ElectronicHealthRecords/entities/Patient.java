@@ -2,32 +2,64 @@ package com.group12.ElectronicHealthRecords.entities;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name="patient")
 public class Patient {
 
+    @Id
+    @Column(name = "egn", nullable = false, length = 10)
+    private String egn;
+
     @Column(name = "name", nullable = false)
     private String name;
-    @Id
-    @Column(name = "egn", nullable = false)
-    private String egn;
-    @Column(name = "email", nullable = false)
+
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+
     @Column(name = "allergies", nullable = false)
     private String allergies;
+
     @Column(name = "immunizationStatute", nullable = false)
     private String immunizationStatute;
+
     @Column(name = "bloodType", nullable = false)
     private Character bloodType;
+
     @Column(name = "weight", nullable = false)
     private Integer weight;
+
     @Column(name = "dateOfBirth", nullable = false)
     private Date dateOfBirth;
+
     @Column(name = "laboratoryResult")
     private String laboratoryResult;
+
     @Column(name = "illness")
     private String illness;
+
+    @OneToMany(mappedBy = "patient", orphanRemoval = true)
+    private List<Examination> examinations;
+
+    @OneToMany(mappedBy = "patient", orphanRemoval = true)
+    private List<Calendar> calendars;
+
+    public List<Calendar> getCalendars() {
+        return calendars;
+    }
+
+    public void setCalendars(List<Calendar> calendars) {
+        this.calendars = calendars;
+    }
+
+    public List<Examination> getExaminations() {
+        return examinations;
+    }
+
+    public void setExaminations(List<Examination> examinations) {
+        this.examinations = examinations;
+    }
 
     public Patient() {
     }
@@ -42,14 +74,6 @@ public class Patient {
         this.bloodType = bloodType;
         this.weight = weight;
         this.dateOfBirth = dateOfBirth;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
