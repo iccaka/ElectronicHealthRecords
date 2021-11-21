@@ -1,6 +1,6 @@
 package com.group12.ElectronicHealthRecords.api;
 
-import lombok.RequiredArgsConstructor;g
+import lombok.RequiredArgsConstructor;
 import com.group12.ElectronicHealthRecords.entities.Doctor;
 import com.group12.ElectronicHealthRecords.services.DoctorService;
 import org.springframework.http.ResponseEntity;
