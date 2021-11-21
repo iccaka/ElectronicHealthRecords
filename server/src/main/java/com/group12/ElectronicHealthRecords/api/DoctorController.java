@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import com.group12.ElectronicHealthRecords.entities.Doctor;
 import com.group12.ElectronicHealthRecords.services.DoctorService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DoctorController {
 
-    private  final DoctorService doctorService;
+    private final DoctorService doctorService;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/doctors")
     public ResponseEntity<List<Doctor>>getDoctors() {
@@ -22,6 +24,7 @@ public class DoctorController {
 
     @PostMapping("/doctor/save")
     public ResponseEntity<Doctor>saveDoctor(@RequestBody Doctor doctor) {
+        doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
         return  ResponseEntity.ok().body(doctorService.saveDoctor(doctor));
     }
 }
