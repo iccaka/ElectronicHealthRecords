@@ -1,5 +1,8 @@
 package com.group12.ElectronicHealthRecords.api;
 
+import com.group12.ElectronicHealthRecords.beans.DoctorRequest;
+import com.group12.ElectronicHealthRecords.entities.AccessCode;
+import com.group12.ElectronicHealthRecords.repositories.AccessCodeRepository;
 import lombok.RequiredArgsConstructor;
 import com.group12.ElectronicHealthRecords.entities.Doctor;
 import com.group12.ElectronicHealthRecords.services.DoctorService;
@@ -16,6 +19,7 @@ public class DoctorController {
 
     private final DoctorService doctorService;
     private final PasswordEncoder passwordEncoder;
+    private final AccessCodeRepository accessCodeRepository;
 
     @GetMapping("/doctors")
     public ResponseEntity<List<Doctor>>getDoctors() {
@@ -23,8 +27,18 @@ public class DoctorController {
     }
 
     @PostMapping("/doctor/save")
-    public ResponseEntity<Doctor>saveDoctor(@RequestBody Doctor doctor) {
-        doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
+    public ResponseEntity<?>saveDoctor(@RequestBody DoctorRequest doctorRequest) {
+
+        AccessCode accessCode = accessCodeRepository.findByAccessCode(doctorRequest.getAccessCode());
+        if(accessCode == null || accessCode.getUsed()){
+            return ResponseEntity.badRequest().body("Invalid access code!");
+        }
+        accessCode.setUsed(true);
+
+        Doctor doctor = new Doctor(doctorRequest.getEgn(), doctorRequest.getName(),
+                        doctorRequest.getEmail(), doctorRequest.getPassword(),
+                        doctorRequest.getSpecialization(), null, null);
+        doctorRequest.setPassword(passwordEncoder.encode(doctorRequest.getPassword()));
         return  ResponseEntity.ok().body(doctorService.saveDoctor(doctor));
     }
 }
