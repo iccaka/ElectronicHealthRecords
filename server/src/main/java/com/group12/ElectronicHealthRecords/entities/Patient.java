@@ -1,11 +1,18 @@
 package com.group12.ElectronicHealthRecords.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name="patient")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Patient {
 
     @Id
@@ -44,116 +51,5 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient", orphanRemoval = true)
     private List<Calendar> calendars;
-
-    public List<Calendar> getCalendars() {
-        return calendars;
-    }
-
-    public void setCalendars(List<Calendar> calendars) {
-        this.calendars = calendars;
-    }
-
-    public List<Examination> getExaminations() {
-        return examinations;
-    }
-
-    public void setExaminations(List<Examination> examinations) {
-        this.examinations = examinations;
-    }
-
-    public Patient() {
-    }
-
-    public Patient(String name, String egn, String email, String allergies, String immunizationStatute, Character bloodType,
-                    Integer weight, Date dateOfBirth) {
-        this.name = name;
-        this.egn = egn;
-        this.email = email;
-        this.allergies = allergies;
-        this.immunizationStatute = immunizationStatute;
-        this.bloodType = bloodType;
-        this.weight = weight;
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEgn() {
-        return egn;
-    }
-
-    public void setEgn(String egn) {
-        this.egn = egn;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAllergies() {
-        return allergies;
-    }
-
-    public void setAllergies(String allergies) {
-        this.allergies = allergies;
-    }
-
-    public String getImmunizationStatute() {
-        return immunizationStatute;
-    }
-
-    public void setImmunizationStatute(String immunizationStatute) {
-        this.immunizationStatute = immunizationStatute;
-    }
-
-    public Character getBloodType() {
-        return bloodType;
-    }
-
-    public void setBloodType(Character bloodType) {
-        this.bloodType = bloodType;
-    }
-
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getLaboratoryResult() {
-        return laboratoryResult;
-    }
-
-    public void setLaboratoryResult(String laboratoryResult) {
-        this.laboratoryResult = laboratoryResult;
-    }
-
-    public String getIllness() {
-        return illness;
-    }
-
-    public void setIllness(String illness) {
-        this.illness = illness;
-    }
 }
 
