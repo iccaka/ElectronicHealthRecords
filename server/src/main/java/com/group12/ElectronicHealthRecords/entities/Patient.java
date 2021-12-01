@@ -40,9 +40,6 @@ public class Patient {
     @Column(name = "dateOfBirth", nullable = false)
     private Date dateOfBirth;
 
-    @Column(name = "laboratoryResult")
-    private String laboratoryResult;
-
     @Column(name = "illness")
     private String illness;
 
@@ -51,5 +48,9 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient", orphanRemoval = true)
     private List<Calendar> calendars;
+
+    public Patient(String egn, String name, String email, String allergies, String immunizationStatute,
+                   Character bloodType, Date dateOfBirth, String laboratoryResult, String illness) {
+    }
 }
 
