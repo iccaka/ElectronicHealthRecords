@@ -36,7 +36,6 @@ public class PatientController {
         Optional<Patient> result = patientRepository.findByEgn(egn);
         return result.isPresent() ? ResponseEntity.ok(result.get()) : ResponseEntity.ok("Няма намерено егн!");
     }
-
     @PostMapping("/save/patient")
     public ResponseEntity<?> savePatient(@RequestBody Patient patient) {
         patient = patientRepository.save(patient);
