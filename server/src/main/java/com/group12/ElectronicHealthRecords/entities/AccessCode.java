@@ -17,7 +17,7 @@ import javax.persistence.Table;
 public class AccessCode {
 
     @Id
-    @Column(name = "accessCode", nullable = false)
+    @Column(name = "access_code", nullable = false)
     private String accessCode;
 
     @Column(name = "used", nullable = false)
