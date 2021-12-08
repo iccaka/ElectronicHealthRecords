@@ -1,5 +1,6 @@
 package com.group12.ElectronicHealthRecords.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,9 +44,11 @@ public class Patient {
     @Column(name = "illness")
     private String illness;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "patient", orphanRemoval = true)
     private List<Examination> examinations;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "patient", orphanRemoval = true)
     private List<Calendar> calendars;
 

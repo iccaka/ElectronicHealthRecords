@@ -9,9 +9,6 @@ import java.util.List;
 
 public interface CalendarRepository extends JpaRepository<Calendar, Long> {
 
-    @Query("SELECT c FROM Calendar c WHERE c.date > :start AND c.date < :end")
-    List<Calendar> findAppointmentsInRange(LocalDateTime start, LocalDateTime end);
-
-    @Query("SELECT COUNT(c) from Calendar c WHERE c.date < :end AND DATEADD(HOUR, c.duration, c.date) > :start")
-    Integer findOverlappingAppointments(LocalDateTime start, LocalDateTime end);
+    @Query("SELECT c FROM Calendar c WHERE c.doctor.egn = :egn")
+    List<Calendar> findAllDoctorApointments(String egn);
 }

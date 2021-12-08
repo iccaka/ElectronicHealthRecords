@@ -1,43 +1,96 @@
 package com.group12.ElectronicHealthRecords.services;
 
+import com.group12.ElectronicHealthRecords.beans.CalendarRequest;
 import com.group12.ElectronicHealthRecords.entities.Calendar;
+import com.group12.ElectronicHealthRecords.entities.Doctor;
+import com.group12.ElectronicHealthRecords.entities.Patient;
 import com.group12.ElectronicHealthRecords.repositories.CalendarRepository;
+import com.group12.ElectronicHealthRecords.repositories.DoctorRepository;
+import com.group12.ElectronicHealthRecords.repositories.PatientRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class CalendarService {
     private final CalendarRepository calendarRepository;
+    private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
 
-    public Optional<Calendar> getAppointmentById(Long id) {
-        return calendarRepository.findById(id);
+    public ResponseEntity<?> getAppointmentById(Long id) {
+        Optional<Calendar> calendar = calendarRepository.findById(id);
+        return calendar.isPresent() ? ResponseEntity.ok().body(calendar.get()) : ResponseEntity.notFound().build();
     }
 
     public List<Calendar> getAppointments() {
-        return calendarRepository.findAll();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Doctor doctor = doctorRepository.findByEmail(auth.getPrincipal().toString());
+
+        return calendarRepository.findAllDoctorApointments(doctor.getEgn());
     }
 
     public List<Calendar> findAppointmentsInPeriod(LocalDateTime start, LocalDateTime end) {
-        return calendarRepository.findAppointmentsInRange(start, end);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Doctor doctor = doctorRepository.findByEmail(auth.getPrincipal().toString());
+        List<Calendar> appointments = calendarRepository.findAllDoctorApointments(doctor.getEgn());
+
+        List<Calendar> filteredAppointments = appointments.stream().filter(c ->
+                c.getDate().isAfter(start) && c.getDate().isBefore(end)).collect(Collectors.toList());
+        return filteredAppointments;
     }
 
     public boolean hasOverlappingAppointments(Calendar calendar) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Doctor doctor = doctorRepository.findByEmail(auth.getPrincipal().toString());
+        List<Calendar> appointments = calendarRepository.findAllDoctorApointments(doctor.getEgn());
+
         LocalDateTime start = calendar.getDate();
-        LocalDateTime end = start.plusHours(calendar.getDuration());
-        Integer overlapping = calendarRepository.findOverlappingAppointments(start, end);
-        return overlapping != 0;
+        LocalDateTime end = calendar.getDate().plusHours(calendar.getDuration());
+
+        List<Calendar> filteredAppointments = appointments.stream().filter(c -> {
+            LocalDateTime currentStart = c.getDate();
+            LocalDateTime currentEnd = c.getDate().plusMinutes(c.getDuration());
+            return start.isBefore(currentEnd) && end.isAfter(currentStart);
+        }).collect(Collectors.toList());
+
+        return filteredAppointments.size() != 0;
     }
 
-    public Calendar createAppointment(Calendar calendar) {
-        if (this.hasOverlappingAppointments(calendar)) {
-            throw new IllegalArgumentException("Appointments already exist in the given period");
+    public ResponseEntity<?> createAppointment(CalendarRequest calendarRequest) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Doctor doctor = doctorRepository.findByEmail(auth.getPrincipal().toString());
+
+        Optional<Patient> patient = patientRepository.findByEgn(calendarRequest.getPatientEgn());
+        if (!patient.isPresent()) {
+            return ResponseEntity.badRequest().body("No patient found with given EGN");
         }
-        return calendarRepository.save(calendar);
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime dateTime = LocalDateTime.parse(calendarRequest.getDate(), dateTimeFormatter);
+
+        Calendar calendar = new Calendar();
+        calendar.setName(calendarRequest.getName());
+        calendar.setDescription(calendarRequest.getDescription());
+        calendar.setDoctor(doctor);
+        calendar.setPatient(patient.get());
+        calendar.setDate(dateTime);
+        calendar.setDuration(calendarRequest.getDuration());
+
+        if (this.hasOverlappingAppointments(calendar)) {
+            return ResponseEntity.badRequest().body("Appointments already exist in the given period");
+        }
+
+        calendarRepository.save(calendar);
+        return ResponseEntity.ok().body(calendar);
     }
 
     public void deleteAppointment(Long id) {

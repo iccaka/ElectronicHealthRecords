@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -28,17 +30,22 @@ public class DoctorController {
 
     @PostMapping("/doctor/save")
     public ResponseEntity<?>saveDoctor(@RequestBody DoctorRequest doctorRequest) {
-
-        AccessCode accessCode = accessCodeRepository.findByAccessCode(doctorRequest.getAccessCode());
-        if(accessCode == null || accessCode.getUsed()){
+        Optional<AccessCode> accessCode = accessCodeRepository.findById(doctorRequest.getAccessCode());
+        if(!accessCode.isPresent() || accessCode.get().getUsed()) {
             return ResponseEntity.badRequest().body("Invalid access code!");
         }
-        accessCode.setUsed(true);
+        accessCode.get().setUsed(true);
 
-        Doctor doctor = new Doctor(doctorRequest.getEgn(), doctorRequest.getName(),
-                        doctorRequest.getEmail(), doctorRequest.getPassword(),
-                        doctorRequest.getSpecialization(), null, null);
         doctorRequest.setPassword(passwordEncoder.encode(doctorRequest.getPassword()));
+        Doctor doctor = new Doctor(
+                doctorRequest.getEgn(),
+                doctorRequest.getName(),
+                doctorRequest.getEmail(),
+                doctorRequest.getPassword(),
+                doctorRequest.getSpecialization(),
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
         return  ResponseEntity.ok().body(doctorService.saveDoctor(doctor));
     }
 }
