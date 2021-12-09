@@ -10,9 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -30,14 +28,30 @@ public class DoctorController {
 
     @PostMapping("/doctor/save")
     public ResponseEntity<?>saveDoctor(@RequestBody DoctorRequest doctorRequest) {
+        Map<String, String> response = new HashMap<>();
         Optional<AccessCode> accessCode = accessCodeRepository.findById(doctorRequest.getAccessCode());
         if(!accessCode.isPresent() || accessCode.get().getUsed()) {
-            return ResponseEntity.badRequest().body("Invalid access code!");
+            response.put("error_message", "Invalid access code!");
+            return ResponseEntity.badRequest().body(response);
         }
+
+        Optional<Doctor> doctor;
+        doctor = doctorService.getDoctorByEmail(doctorRequest.getEmail());
+        if (doctor.isPresent()) {
+            response.put("error_message", "User with this email already exists!");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        doctor = doctorService.getDoctorById(doctorRequest.getEgn());
+        if (doctor.isPresent()) {
+            response.put("error_message", "User with this EGN aleady exists!");
+            return ResponseEntity.badRequest().body(response);
+        }
+
         accessCode.get().setUsed(true);
 
         doctorRequest.setPassword(passwordEncoder.encode(doctorRequest.getPassword()));
-        Doctor doctor = new Doctor(
+        Doctor newDoctor = new Doctor(
                 doctorRequest.getEgn(),
                 doctorRequest.getName(),
                 doctorRequest.getEmail(),
@@ -46,6 +60,6 @@ public class DoctorController {
                 new ArrayList<>(),
                 new ArrayList<>()
         );
-        return  ResponseEntity.ok().body(doctorService.saveDoctor(doctor));
+        return  ResponseEntity.ok().body(doctorService.saveDoctor(newDoctor));
     }
 }

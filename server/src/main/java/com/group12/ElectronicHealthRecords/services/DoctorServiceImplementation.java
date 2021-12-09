@@ -14,6 +14,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -25,14 +26,14 @@ public class DoctorServiceImplementation implements DoctorService, UserDetailsSe
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Doctor doctor = doctorRepository.findByEmail(email);
-        if(doctor == null){
+        Optional<Doctor> doctor = doctorRepository.findByEmail(email);
+        if(!doctor.isPresent()) {
             log.error("Doctor not found in the database!");
             throw new UsernameNotFoundException("Doctor not found in the database!");
         } else {
             log.info("Doctor found in the database: {}", email);
         }
-        return new org.springframework.security.core.userdetails.User(doctor.getEmail(), doctor.getPassword(), new ArrayList<>());
+        return new org.springframework.security.core.userdetails.User(doctor.get().getEmail(), doctor.get().getPassword(), new ArrayList<>());
     }
 
     @Override
@@ -42,9 +43,13 @@ public class DoctorServiceImplementation implements DoctorService, UserDetailsSe
     }
 
     @Override
-    public Doctor getDoctor(String email) {
-        log.info("Fetching doctor {}.", email);
+    public Optional<Doctor> getDoctorByEmail(String email) {
         return doctorRepository.findByEmail(email);
+    }
+
+    @Override
+    public Optional<Doctor> getDoctorById(String egn) {
+        return doctorRepository.findById(egn);
     }
 
     @Override
