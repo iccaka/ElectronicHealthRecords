@@ -31,4 +31,7 @@ public class Examination {
     @ManyToOne
     @JoinColumn(name = "patient_egn")
     private Patient patient;
+
+    public Examination(Long id, String results, Date date, String patientEgn) {
+    }
 }

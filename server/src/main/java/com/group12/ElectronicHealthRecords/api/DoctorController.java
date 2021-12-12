@@ -44,7 +44,7 @@ public class DoctorController {
 
         doctor = doctorService.getDoctorById(doctorRequest.getEgn());
         if (doctor.isPresent()) {
-            response.put("error_message", "User with this EGN aleady exists!");
+            response.put("error_message", "User with this EGN already exists!");
             return ResponseEntity.badRequest().body(response);
         }
 

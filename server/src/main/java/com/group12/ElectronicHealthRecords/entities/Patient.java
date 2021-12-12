@@ -55,5 +55,8 @@ public class Patient {
     public Patient(String egn, String name, String email, String allergies, String immunizationStatute,
                    Character bloodType, Date dateOfBirth, String laboratoryResult, String illness) {
     }
+
+    public Patient(String egn, String name, String email, String allergies, String immunizationStatute, Character bloodType, Integer weight, Date dateOfBirth, String illness) {
+    }
 }
 
