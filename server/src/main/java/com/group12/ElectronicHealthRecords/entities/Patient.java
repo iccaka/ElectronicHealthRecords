@@ -33,7 +33,7 @@ public class Patient {
     private String immunizationStatute;
 
     @Column(name = "bloodType", nullable = false)
-    private Character bloodType;
+    private String bloodType;
 
     @Column(name = "weight", nullable = false)
     private Integer weight;
@@ -51,12 +51,5 @@ public class Patient {
     @JsonIgnore
     @OneToMany(mappedBy = "patient", orphanRemoval = true)
     private List<Calendar> calendars;
-
-    public Patient(String egn, String name, String email, String allergies, String immunizationStatute,
-                   Character bloodType, Date dateOfBirth, String laboratoryResult, String illness) {
-    }
-
-    public Patient(String egn, String name, String email, String allergies, String immunizationStatute, Character bloodType, Integer weight, Date dateOfBirth, String illness) {
-    }
 }
 

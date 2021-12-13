@@ -56,4 +56,28 @@ public class PatientController {
                 new ArrayList<>());
         return  ResponseEntity.ok().body(patientRepository.save(newPatient));
     }
+
+    @PutMapping("/patient/update")
+    public ResponseEntity<?> updatePatient(@RequestBody PatientRequest patientRequest) {
+        Map<String, String> response = new HashMap<>();
+        Optional<Patient> patient = patientRepository.findByEgn(patientRequest.getEgn());
+        if (!patient.isPresent()) {
+            response.put("error_message", "Patient with this egn does not exist!");
+            return ResponseEntity.badRequest().body(response);
+        }
+        Patient newPatient = new Patient(
+                patientRequest.getEgn(),
+                patientRequest.getName(),
+                patientRequest.getEmail(),
+                patientRequest.getAllergies(),
+                patientRequest.getImmunizationStatute(),
+                patientRequest.getBloodType(),
+                patientRequest.getWeight(),
+                patientRequest.getDateOfBirth(),
+                patientRequest.getIllness(),
+                patient.get().getExaminations(),
+                patient.get().getCalendars()
+        );
+        return  ResponseEntity.ok().body(patientRepository.save(newPatient));
+    }
 }

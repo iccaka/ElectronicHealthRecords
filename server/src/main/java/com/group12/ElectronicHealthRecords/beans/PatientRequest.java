@@ -11,7 +11,7 @@ public class PatientRequest {
     private String email;
     private String allergies;
     private String immunizationStatute;
-    private Character bloodType;
+    private String bloodType;
     private Integer weight;
     private Date dateOfBirth;
     private String illness;
