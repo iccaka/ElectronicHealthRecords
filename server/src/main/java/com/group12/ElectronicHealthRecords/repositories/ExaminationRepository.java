@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ExaminationRepository extends JpaRepository<Examination, Long> {
-    @Query("SELECT e FROM Examination e WHERE e.patient.egn = :patientEgn")
+    @Query("SELECT e, p FROM Examination e INNER JOIN Prescription p ON e.patient.egn = :patientEgn AND e.prescription.id = p.id")
     List<Examination> findAllPatientExaminations(String patientEgn);
-
 }

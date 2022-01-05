@@ -7,8 +7,9 @@ import java.util.Date;
 @Data
 public class PrescriptionRequest {
 
+    private String id;
     private String medications;
-    private Date start_date;
-    private Date end_date;
+    private String start_date;
+    private String end_date;
     private String description;
 }

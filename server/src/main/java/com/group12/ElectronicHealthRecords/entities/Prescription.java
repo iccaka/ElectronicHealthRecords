@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -21,10 +22,10 @@ public class Prescription {
     private String medications;
 
     @Column(name = "start_date")
-    private Date start_date;
+    private LocalDateTime start_date;
 
     @Column(name = "end_date")
-    private Date end_date;
+    private LocalDateTime end_date;
 
     @Column(name = "description")
     private String description;
