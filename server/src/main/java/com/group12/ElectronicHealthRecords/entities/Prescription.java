@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Prescription {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "medications")
@@ -29,4 +29,11 @@ public class Prescription {
 
     @Column(name = "description")
     private String description;
+
+    public Prescription(String medications, LocalDateTime start_date, LocalDateTime end_date, String description) {
+        this.medications = medications;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.description = description;
+    }
 }
