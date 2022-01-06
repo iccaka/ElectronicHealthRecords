@@ -52,7 +52,14 @@ public class ExaminationService {
     }
 
     public ResponseEntity<?> getPatientExaminationByEgn(String patientEgn) {
-        List<Examination> examination = examinationRepository.findAllPatientExaminations(patientEgn);
+        Optional<Examination> examination = examinationRepository.findAllPatientExaminations(patientEgn);
+        Map<String, String> response = new HashMap<>();
+
+        if(!examination.isPresent()){
+            response.put("error_message", "No examination found with given patient EGN");
+            return ResponseEntity.badRequest().body(response);
+        }
+
         return ResponseEntity.ok().body(examination);
     }
 
