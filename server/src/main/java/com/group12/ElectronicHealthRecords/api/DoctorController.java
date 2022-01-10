@@ -58,7 +58,8 @@ public class DoctorController {
                 doctorRequest.getPassword(),
                 doctorRequest.getSpecialization(),
                 new ArrayList<>(),
-                new ArrayList<>()
+                new ArrayList<>(),
+                false
         );
         return  ResponseEntity.ok().body(doctorService.saveDoctor(newDoctor));
     }

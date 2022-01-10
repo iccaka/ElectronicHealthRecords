@@ -5,6 +5,7 @@ import com.group12.ElectronicHealthRecords.entities.Doctor;
 import com.group12.ElectronicHealthRecords.repositories.DoctorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,7 +34,11 @@ public class DoctorServiceImplementation implements DoctorService, UserDetailsSe
         } else {
             log.info("Doctor found in the database: {}", email);
         }
-        return new org.springframework.security.core.userdetails.User(doctor.get().getEmail(), doctor.get().getPassword(), new ArrayList<>());
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        if (doctor.get().isAdmin()) {
+            authorities.add(new SimpleGrantedAuthority("admin"));
+        }
+        return new org.springframework.security.core.userdetails.User(doctor.get().getEmail(), doctor.get().getPassword(), authorities);
     }
 
     @Override

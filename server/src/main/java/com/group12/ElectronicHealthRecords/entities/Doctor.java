@@ -37,4 +37,7 @@ public class Doctor {
     @JsonIgnore
     @OneToMany(mappedBy = "doctor", orphanRemoval = true)
     private List<Calendar> calendars;
+
+    @Column(name = "admin", nullable = false)
+    private boolean admin;
 }
