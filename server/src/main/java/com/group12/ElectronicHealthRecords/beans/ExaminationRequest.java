@@ -1,9 +1,11 @@
 package com.group12.ElectronicHealthRecords.beans;
+import com.group12.ElectronicHealthRecords.entities.Prescription;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -13,5 +15,7 @@ public class ExaminationRequest {
     private Long id;
     private String results;
     private Date date;
-    private String patientEgn;
+    private String patient_egn;
+    private String doctor_egn;
+    private Long prescription_id;
 }

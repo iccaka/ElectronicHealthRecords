@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "examination")
@@ -31,6 +32,10 @@ public class Examination {
     @ManyToOne
     @JoinColumn(name = "patient_egn")
     private Patient patient;
+
+    @OneToOne
+    @JoinColumn(name = "prescription_id")
+    private Prescription prescription;
 
     public Examination(Long id, String results, Date date, String patientEgn) {
     }
