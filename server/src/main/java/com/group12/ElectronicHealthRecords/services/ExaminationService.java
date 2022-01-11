@@ -29,7 +29,7 @@ public class ExaminationService {
     private final PrescriptionRepository prescriptionRepository;
 
     public ResponseEntity<?> createExamination(ExaminationRequest examinationRequest) {
-        Optional<Patient> patient = patientRepository.findByEgn(examinationRequest.getPatientEgn());
+        Optional<Patient> patient = patientRepository.findByEgn(examinationRequest.getPatient_egn());
         Map<String, String> response = new HashMap<>();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<Doctor> doctor = doctorRepository.findByEmail(auth.getPrincipal().toString());
@@ -37,6 +37,16 @@ public class ExaminationService {
 
         if (!patient.isPresent()) {
             response.put("error_message", "No patient found with given EGN");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (!doctor.isPresent()) {
+            response.put("error_message", "No doctor found with given EGN");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (!prescription.isPresent()) {
+            response.put("error_message", "No prescription found with given ID");
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -64,7 +74,7 @@ public class ExaminationService {
     }
 
     public ResponseEntity<?> updateExamination(ExaminationRequest examinationRequest){
-        Optional<Patient> patient = patientRepository.findByEgn(examinationRequest.getPatientEgn());
+        Optional<Patient> patient = patientRepository.findByEgn(examinationRequest.getPatient_egn());
         Map<String, String> response = new HashMap<>();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<Doctor> doctor = doctorRepository.findByEmail(auth.getPrincipal().toString());

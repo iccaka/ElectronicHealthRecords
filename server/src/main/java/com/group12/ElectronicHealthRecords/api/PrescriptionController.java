@@ -13,6 +13,11 @@ public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
 
+    @GetMapping("/prescription")
+    public ResponseEntity<?> getPrescriptionById(@RequestParam Long id) {
+        return prescriptionService.getPrescriptionById(id);
+    }
+
     @PostMapping("/prescription/save")
     public ResponseEntity<?> createPrescription(@RequestBody PrescriptionRequest prescriptionRequest) {
         return prescriptionService.createPrescription(prescriptionRequest);

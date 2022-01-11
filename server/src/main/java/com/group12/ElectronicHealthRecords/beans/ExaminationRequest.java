@@ -15,6 +15,7 @@ public class ExaminationRequest {
     private Long id;
     private String results;
     private Date date;
-    private String patientEgn;
+    private String patient_egn;
+    private String doctor_egn;
     private Long prescription_id;
 }

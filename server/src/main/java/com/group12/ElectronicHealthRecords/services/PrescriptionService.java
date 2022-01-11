@@ -11,12 +11,25 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class PrescriptionService {
 
     private final PrescriptionRepository prescriptionRepository;
+
+    public ResponseEntity<?> getPrescriptionById(Long id) {
+        Optional<Prescription> prescription = prescriptionRepository.findById(id);
+        Map<String, String> response = new HashMap<>();
+
+        if(!prescription.isPresent()) {
+            response.put("error_message", "No prescription found with given ID");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        return ResponseEntity.ok().body(prescription);
+    }
 
     public ResponseEntity<?> createPrescription(PrescriptionRequest prescriptionRequest) {
         Map<String, String> response = new HashMap<>();
