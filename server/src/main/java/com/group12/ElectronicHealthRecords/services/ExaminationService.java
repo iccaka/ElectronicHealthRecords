@@ -4,9 +4,11 @@ import com.group12.ElectronicHealthRecords.beans.ExaminationRequest;
 import com.group12.ElectronicHealthRecords.entities.Doctor;
 import com.group12.ElectronicHealthRecords.entities.Examination;
 import com.group12.ElectronicHealthRecords.entities.Patient;
+import com.group12.ElectronicHealthRecords.entities.Prescription;
 import com.group12.ElectronicHealthRecords.repositories.DoctorRepository;
 import com.group12.ElectronicHealthRecords.repositories.ExaminationRepository;
 import com.group12.ElectronicHealthRecords.repositories.PatientRepository;
+import com.group12.ElectronicHealthRecords.repositories.PrescriptionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,15 +26,27 @@ public class ExaminationService {
     private final ExaminationRepository examinationRepository;
     private final PatientRepository patientRepository;
     private  final DoctorRepository doctorRepository;
+    private final PrescriptionRepository prescriptionRepository;
 
     public ResponseEntity<?> createExamination(ExaminationRequest examinationRequest) {
-        Optional<Patient> patient = patientRepository.findByEgn(examinationRequest.getPatientEgn());
+        Optional<Patient> patient = patientRepository.findByEgn(examinationRequest.getPatient_egn());
         Map<String, String> response = new HashMap<>();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<Doctor> doctor = doctorRepository.findByEmail(auth.getPrincipal().toString());
+        Optional<Prescription> prescription = prescriptionRepository.findById(examinationRequest.getPrescription_id());
 
         if (!patient.isPresent()) {
             response.put("error_message", "No patient found with given EGN");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (!doctor.isPresent()) {
+            response.put("error_message", "No doctor found with given EGN");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (!prescription.isPresent()) {
+            response.put("error_message", "No prescription found with given ID");
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -41,21 +55,30 @@ public class ExaminationService {
                 newExamination.setDate(examinationRequest.getDate());
                 newExamination.setPatient(patient.get());
                 newExamination.setDoctor(doctor.get());
+                newExamination.setPrescription(prescription.get());
 
         examinationRepository.save(newExamination);
         return ResponseEntity.ok().body(newExamination);
     }
 
     public ResponseEntity<?> getPatientExaminationByEgn(String patientEgn) {
-        List<Examination> examination = examinationRepository.findAllPatientExaminations(patientEgn);
-        return ResponseEntity.ok().body(examination);
+        List<Optional<Examination>> examinations = examinationRepository.findAllPatientExaminations(patientEgn);
+        Map<String, String> response = new HashMap<>();
+
+        if(examinations.isEmpty()) {
+            response.put("error_message", "No examination/s found with given patient EGN");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        return ResponseEntity.ok().body(examinations);
     }
 
     public ResponseEntity<?> updateExamination(ExaminationRequest examinationRequest){
-        Optional<Patient> patient = patientRepository.findByEgn(examinationRequest.getPatientEgn());
+        Optional<Patient> patient = patientRepository.findByEgn(examinationRequest.getPatient_egn());
         Map<String, String> response = new HashMap<>();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<Doctor> doctor = doctorRepository.findByEmail(auth.getPrincipal().toString());
+        Optional<Prescription> prescription = prescriptionRepository.findById(examinationRequest.getPrescription_id());
 
         if (!patient.isPresent()) {
             response.put("error_message", "No patient found with given EGN");
@@ -68,6 +91,7 @@ public class ExaminationService {
         newExamination.setDate(examinationRequest.getDate());
         newExamination.setPatient(patient.get());
         newExamination.setDoctor(doctor.get());
+        newExamination.setPrescription(prescription.get());
 
         examinationRepository.save(newExamination);
         return ResponseEntity.ok().body(newExamination);
