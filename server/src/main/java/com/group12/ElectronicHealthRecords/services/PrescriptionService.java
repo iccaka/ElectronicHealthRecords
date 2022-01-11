@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Map;
 import java.util.Optional;
 
@@ -49,5 +50,17 @@ public class PrescriptionService {
         prescriptionRepository.save(newPrescription);
 
         return ResponseEntity.ok().body(newPrescription);
+    }
+
+    public ResponseEntity<?> getPerscriptionById(Long id) {
+        Optional<Prescription> prescription = prescriptionRepository.findById(id);
+        Map<String, String> response = new HashMap<>();
+
+        if(!prescription.isPresent()){
+            response.put("error_message", "No examination found with given patient EGN");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        return ResponseEntity.ok().body(prescription);
     }
 }

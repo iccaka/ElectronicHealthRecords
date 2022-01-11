@@ -3,6 +3,7 @@ package com.group12.ElectronicHealthRecords.api;
 import com.group12.ElectronicHealthRecords.beans.PatientRequest;
 import com.group12.ElectronicHealthRecords.entities.Patient;
 import com.group12.ElectronicHealthRecords.repositories.PatientRepository;
+import com.group12.ElectronicHealthRecords.repositories.PrescriptionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.*;
 public class PatientController {
 
     PatientRepository patientRepository;
+    PrescriptionRepository patientRepository;
 
     @GetMapping("/search/patient/name")
     public ResponseEntity<?> getPatientsByName(@RequestParam String name) {
@@ -52,6 +54,7 @@ public class PatientController {
                 patientRequest.getWeight(),
                 patientRequest.getDateOfBirth(),
                 patientRequest.getIllness(),
+                "",
                 new ArrayList<>(),
                 new ArrayList<>());
         return  ResponseEntity.ok().body(patientRepository.save(newPatient));
@@ -75,6 +78,7 @@ public class PatientController {
                 patientRequest.getWeight(),
                 patientRequest.getDateOfBirth(),
                 patientRequest.getIllness(),
+                patient.get().getMedication(),
                 patient.get().getExaminations(),
                 patient.get().getCalendars()
         );

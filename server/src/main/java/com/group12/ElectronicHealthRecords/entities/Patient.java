@@ -45,6 +45,10 @@ public class Patient {
     private String illness;
 
     @JsonIgnore
+    @Column(name = "medication")
+    private String medication;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "patient", orphanRemoval = true)
     private List<Examination> examinations;
 

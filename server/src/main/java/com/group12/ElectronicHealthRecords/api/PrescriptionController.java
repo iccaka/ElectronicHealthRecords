@@ -2,9 +2,12 @@ package com.group12.ElectronicHealthRecords.api;
 
 import com.group12.ElectronicHealthRecords.beans.PrescriptionRequest;
 import com.group12.ElectronicHealthRecords.services.PrescriptionService;
+import com.group12.ElectronicHealthRecords.entities.Prescription;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
