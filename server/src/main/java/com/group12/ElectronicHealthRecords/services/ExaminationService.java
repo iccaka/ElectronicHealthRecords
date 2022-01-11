@@ -62,15 +62,15 @@ public class ExaminationService {
     }
 
     public ResponseEntity<?> getPatientExaminationByEgn(String patientEgn) {
-        Optional<Examination> examination = examinationRepository.findAllPatientExaminations(patientEgn);
+        List<Optional<Examination>> examinations = examinationRepository.findAllPatientExaminations(patientEgn);
         Map<String, String> response = new HashMap<>();
 
-        if(!examination.isPresent()){
-            response.put("error_message", "No examination found with given patient EGN");
+        if(examinations.isEmpty()) {
+            response.put("error_message", "No examination/s found with given patient EGN");
             return ResponseEntity.badRequest().body(response);
         }
 
-        return ResponseEntity.ok().body(examination);
+        return ResponseEntity.ok().body(examinations);
     }
 
     public ResponseEntity<?> updateExamination(ExaminationRequest examinationRequest){

@@ -16,7 +16,7 @@ import java.util.*;
 public class PatientController {
 
     PatientRepository patientRepository;
-    PrescriptionRepository patientRepository;
+    PrescriptionRepository prescriptionRepository;
 
     @GetMapping("/search/patient/name")
     public ResponseEntity<?> getPatientsByName(@RequestParam String name) {
